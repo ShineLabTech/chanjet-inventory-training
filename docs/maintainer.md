@@ -22,7 +22,7 @@ Key 放在本仓库 Actions Secret `SHINELAB_INVENTORY_API_KEY`。仅手动查�
 
 - 客户端只使用 `https://open.shinelabtech.cn` 的 inventory GET 路径，不跟随重定向。
 - 不给培训身份增加采购订单、库存余额或其他能力。后续平台开放后再单独设计。
-- 查询结果可能出现在私有仓库日志和 Summary；仓库读者可以查看。JSON artifact 保留一天；日志使用仓库自己的保留策略，不能把 artifact 的一天误解为全部数据一天后消失。
+- 查询结果保存在私有仓库日志和 Summary；仓库读者可以查看，保留时间按仓库的运行日志策略。工作流不上传 artifact，不依赖组织的附件存储配额。
 - 不提交真实查询结果。`.env`、`output/` 已忽略。
 - 当前查询工作流只在 main 执行，没有定时任务，不在 push / PR 上调用真实 API。
 - 培训结束后可停用该调用身份，并按实际需要调整仓库成员权限与结果保留。

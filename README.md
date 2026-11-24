@@ -12,7 +12,7 @@
 
 需要你的 GitHub 账号有本仓库 **Write** 或更高权限，并且 AI 已能通过 GitHub CLI 或相应工具使用该账号。管理员会单独授予培训成员权限；加入组织不一定自动获得仓库访问权。
 
-培训 Key 保存在仓库的 GitHub Actions Secret 中，查询时自动注入。你不需要复制 Key。结果显示在本次运行的 Summary 和日志中，JSON 附件保留一天。真实结果不会提交进代码仓库；仓库有读取权限的人可以看到运行结果。
+培训 Key 保存在仓库的 GitHub Actions Secret 中，查询时自动注入。你不需要复制 Key。结果显示在本次运行的 Summary 和日志中，日志中另有 `INVENTORY_RESULT_JSON=` 开头的机器可读结果。真实结果不会提交进代码仓库；仓库有读取权限的人可以看到运行结果。
 
 多个培训查询会串行运行；GitHub Actions 可能合并尚未开始的排队任务。AI 应检查自己那一次运行是否成功，取消时再按需发起。
 
@@ -28,10 +28,9 @@ gh run list --repo ShineLabTech/chanjet-inventory-training --workflow inventory-
 ```bash
 gh run watch RUN_ID --repo ShineLabTech/chanjet-inventory-training --exit-status
 gh run view RUN_ID --repo ShineLabTech/chanjet-inventory-training --log
-gh run download RUN_ID --repo ShineLabTech/chanjet-inventory-training --name inventory-query-RUN_ID --dir output
 ```
 
-`RUN_ID` 是实际运行编号。不要直接选“最近一次”，同学可能同时发起查询。下载多个结果时使用各自的输出目录。
+`RUN_ID` 是实际运行编号。不要直接选“最近一次”，同学可能同时发起查询。AI 可解析日志中 `INVENTORY_RESULT_JSON=` 后的 JSON；只提取该前缀后紧接 `{` 的结果行，忽略打印工作流命令的行。
 
 ## 在自己的电脑上运行
 

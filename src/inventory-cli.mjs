@@ -45,7 +45,7 @@ function cell(value) {
   return String(value)
     .replace(/[\p{C}]/gu, ' ')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/[\\`*_{}\[\]()#+.!-]/g, '\\$&')
+    .replace(/[\\`*_{}\[\]()#+.!~-]/g, '\\$&')
     .replace(/\|/g, '&#124;');
 }
 

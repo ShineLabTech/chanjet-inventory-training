@@ -31,10 +31,11 @@ test('untrusted inventory text cannot inject additional terminal log lines', () 
 });
 
 test('inventory names remain literal text in the GitHub Markdown summary', () => {
-  const result = { queried_at: 'sample', classes: ['0602'], source_count: 1, matched_count: 1, shown_count: 1, request_id: 'sample', items: [{ code: '001', name: '[外箱](https://example.invalid/query) <del>正常</del> *停用* ![图](x) `code` \\ |', class_code: '0602', status: '正常' }] };
+  const result = { queried_at: 'sample', classes: ['0602'], source_count: 1, matched_count: 1, shown_count: 1, request_id: 'sample', items: [{ code: '001', name: '[外箱](https://example.invalid/query) <del>正常</del> *停用* ![图](x) `code` \\ | ~~停用~~', class_code: '0602', status: '正常' }] };
   const rendered = renderResult(result);
   assert.ok(rendered.includes('\\[外箱\\]\\(https://example\\.invalid/query\\) &lt;del&gt;正常&lt;/del&gt; \\*停用\\*'));
   assert.ok(rendered.includes('\\!\\[图\\]\\(x\\) \\`code\\` \\\\ &#124;'));
+  assert.ok(rendered.includes('\\~\\~停用\\~\\~'));
 });
 
 test('CLI help works without credentials; absent credentials fail explicitly', () => {
