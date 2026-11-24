@@ -1,0 +1,13 @@
+{
+  "name": "chanjet-inventory-training",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "食验室新人培训：让 AI 运行代码，只读查询畅捷通存货编码。",
+  "engines": { "node": ">=22.9.0" },
+  "scripts": {
+    "query": "node --env-file-if-exists=.env src/inventory-cli.mjs",
+    "test": "node --test",
+    "check": "node --check src/company-chanjet.mjs && node --check src/inventory-cli.mjs"
+  }
+}

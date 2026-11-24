@@ -1,0 +1,56 @@
+name: Read-only inventory query
+run-name: inventory-query-${{ inputs.query_id || github.run_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      classes:
+        description: '分类编码，逗号分隔；默认 0602 外箱包材'
+        default: '0602'
+        type: string
+      keyword:
+        description: '按存货编码或名称筛选；留空展示该分类'
+        default: ''
+        type: string
+      limit:
+        description: '最多展示多少条，1 到 100'
+        default: '20'
+        type: string
+      query_id:
+        description: '本次查询标识，方便 AI 查找对应运行'
+        default: ''
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: training-inventory-query
+  cancel-in-progress: false
+jobs:
+  query:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Query live inventory (GET only)
+        env:
+          SHINELAB_INVENTORY_API_KEY: ${{ secrets.SHINELAB_INVENTORY_API_KEY }}
+          QUERY_CLASSES: ${{ inputs.classes }}
+          QUERY_KEYWORD: ${{ inputs.keyword }}
+          QUERY_LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p output
+          node src/inventory-cli.mjs --json > output/inventory.json
+      - name: Show query result
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; import {renderResult} from './src/inventory-cli.mjs'; const result=JSON.parse(fs.readFileSync('output/inventory.json','utf8')); const text=renderResult(result); console.log(text); fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text+'\n');"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: inventory-query-${{ github.run_id }}
+          path: output/inventory.json
+          retention-days: 1
+          if-no-files-found: error
